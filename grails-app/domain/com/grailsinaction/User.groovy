@@ -22,4 +22,5 @@ class User {
         posts sort: "dateCreated", order: "desc"
     }
 
+    String getDisplayString() { return profile.fullName }
 }

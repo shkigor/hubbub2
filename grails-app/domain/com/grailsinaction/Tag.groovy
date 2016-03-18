@@ -10,4 +10,6 @@ class Tag {
     static constraints = {
         name blank: false
     }
+
+    String getDisplayString() { return name }
 }
