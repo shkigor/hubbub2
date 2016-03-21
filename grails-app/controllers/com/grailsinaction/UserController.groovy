@@ -29,7 +29,7 @@ class UserController {
                 params.each { field, value ->
 
                     if (profileProps.grep(field) && value) {
-                        ilike(field, value)
+                        ilike(field, "%${value}%")
                     }
                 }
 
