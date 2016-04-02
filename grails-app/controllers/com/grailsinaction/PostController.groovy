@@ -33,4 +33,11 @@ class PostController {
         redirect(action: 'timeline', id: id)
     }
 
+/*
+    def addPost(@RequestParameter('frm_id') String id,
+                @RequestParameter('frm_content') String content) {
+        // your logic here...
+    }
+*/
+
 }
