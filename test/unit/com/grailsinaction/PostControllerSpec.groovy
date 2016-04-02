@@ -43,30 +43,33 @@ class PostControllerSpec extends Specification {
     }
 
     def "Adding a valid new post to the timeline"() {
-        given: "A user with posts in the db"
-        User chuck = new User(
-                loginId: "chuck_norris",
-                password: "password").save(failOnError: true)
+        given: "a mock post service"
+        def mockPostService = Mock(PostService)
+        1 * mockPostService.createPost(_, _) >> new Post(content: "Mock Post")
+        controller.postService = mockPostService
 
-        and: "A loginId parameter"
-        params.id = chuck.loginId
+        when:  "controller is invoked"
+        def result = controller.addPost(
+                "joe_cool",
+                "Posting up a storm")
 
-        and: "Some content for the post"
-        params.content = "Chuck Norris can unit test entire applications with a single assert."
+        then: "redirected to timeline, flash message tells us all is well"
+        flash.message ==~ /Added new post: Mock.*/
+//        response.redirectedUrl == '/users/joe_cool'
 
-        when: "addPost is invoked"
-        def model = controller.addPost()
-
-        then: "our flash message and redirect confirms the success"
-        flash.message == "Successfully created Post"
-        response.redirectedUrl == "/post/timeline/${chuck.loginId}"
-        Post.countByUser(chuck) == 1
-
+        // Without the custom URL mapping, the check would be this:
+        response.redirectedUrl == '/post/timeline/joe_cool'
     }
 
     def "Adding an invalid new post to the timeline"() {
         given: "A user with posts in the db"
         User chuck = new User(loginId: "chuck_norris", password: "password").save(failOnError: true)
+
+        and: "A post service that throws an exception with the given data"
+        def errorMsg = "Invalid or empty post"
+        def mockPostService = Mock(PostService)
+        controller.postService = mockPostService
+        1 * mockPostService.createPost(chuck.loginId, null) >> { throw new PostException(message: errorMsg) }
 
         and: "A loginId parameter"
         params.id = chuck.loginId
@@ -78,9 +81,12 @@ class PostControllerSpec extends Specification {
         def model = controller.addPost()
 
         then: "our flash message and redirect confirms the success"
-        flash.message == "Invalid or empty post"
-        response.redirectedUrl == "/post/timeline/${chuck.loginId}"
+        flash.message == errorMsg
+//        response.redirectedUrl == "/users/${chuck.loginId}"
         Post.countByUser(chuck) == 0
+
+        // Without the custom URL mapping, the check would be this:
+        response.redirectedUrl == "/post/timeline/${chuck.loginId}"
     }
 
     @Unroll                                             
