@@ -40,6 +40,29 @@ class UserController {
 
     }
 
+/*
+    def update() {
+        // Attaches existing user from session scope
+        def user = session.user?.attach()
+        if (user) {
+            // Updates fields based on matching params
+            user.properties = params
+            // Validates user is still current
+            if (user.save()) {
+
+                flash.message = "Successfully updated user"
+
+            } else {
+                flash.message = "Failed to update user"
+            }
+            [ user : user ]
+
+        } else {
+            response.sendError(404)
+        }
+    }
+*/
+
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         respond User.list(params), model:[userInstanceCount: User.count()]
