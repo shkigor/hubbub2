@@ -2,6 +2,7 @@ package com.grailsinaction
 
 class Profile {
     byte[] photo
+    String pathToPhoto
     String fullName
     String bio
     String homepage
@@ -21,6 +22,7 @@ class Profile {
         country nullable: true
         timezone nullable: true
         jabberAddress email: true, nullable: true
+        pathToPhoto nullable: true
     }
 
     String toString() { return "Profile of $fullName (id: $id)" }
