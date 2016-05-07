@@ -115,6 +115,22 @@ log4j.main = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 
-    debug "org.hibernate.SQL"
-    trace "org.hibernate.type.descriptor.sql.BasicBinder"
+    debug 'org.hibernate.SQL',
+          'grails.app'
+
+    trace 'org.hibernate.type.descriptor.sql.BasicBinder'
+
+//    // Logging warnings and higher for all of the app
+//    warn 'grails.app'
+//    // Logging infos and higher for all controllers
+//    info 'grails.app.controller'
+//    // Logging debug and higher for the BarService
+//    debug 'grails.app.service.BarService'
+//
+//    appenders {
+//        // ...as above...
+//    }
+//    root {
+//        // ...as above...
+//    }
 }
