@@ -180,10 +180,9 @@ class UserControllerSpec extends Specification {
             response.redirectedUrl == '/user/index'
             flash.message != null
 
-
         when:"An invalid domain instance is passed to the update action"
             response.reset()
-            def user = new User()
+            def user = new User(loginId: "chuck_norris", password: "password")
             user.validate()
             controller.update(user)
 
@@ -194,7 +193,7 @@ class UserControllerSpec extends Specification {
         when:"A valid domain instance is passed to the update action"
             response.reset()
             populateValidParams(params)
-            user = new User(params).save(flush: true)
+            user = new User(params).save(flush: true, failOnError: true)
             controller.update(user)
 
         then:"A redirect is issues to the show action"
@@ -215,7 +214,7 @@ class UserControllerSpec extends Specification {
         when:"A domain instance is created"
             response.reset()
             populateValidParams(params)
-            def user = new User(params).save(flush: true)
+            def user = new User(params).save(flush: true, failOnError: true)
 
         then:"It exists"
             User.count() == 1

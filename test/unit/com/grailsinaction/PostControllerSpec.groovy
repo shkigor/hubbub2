@@ -55,10 +55,10 @@ class PostControllerSpec extends Specification {
 
         then: "redirected to timeline, flash message tells us all is well"
         flash.message ==~ /Added new post: Mock.*/
-//        response.redirectedUrl == '/users/joe_cool'
+        response.redirectedUrl == '/users/joe_cool'
 
         // Without the custom URL mapping, the check would be this:
-        response.redirectedUrl == '/post/timeline/joe_cool'
+//        response.redirectedUrl == '/post/timeline/joe_cool'
     }
 
     def "Adding an invalid new post to the timeline"() {
@@ -82,11 +82,11 @@ class PostControllerSpec extends Specification {
 
         then: "our flash message and redirect confirms the success"
         flash.message == errorMsg
-//        response.redirectedUrl == "/users/${chuck.loginId}"
+        response.redirectedUrl == "/users/${chuck.loginId}"
         Post.countByUser(chuck) == 0
 
         // Without the custom URL mapping, the check would be this:
-        response.redirectedUrl == "/post/timeline/${chuck.loginId}"
+//        response.redirectedUrl == "/post/timeline/${chuck.loginId}"
     }
 
     @Unroll                                             
@@ -103,9 +103,12 @@ class PostControllerSpec extends Specification {
                                                                    
         where:                                                     
         suppliedId  |   expectedUrl                                
-        'joe_cool'  |   '/post/timeline/joe_cool'                  
-        null        |   '/post/timeline/chuck_norris'              
-                                                                   
+        'joe_cool'  |   '/users/joe_cool'
+        null        |   '/users/chuck_norris'
+//        'joe_cool'  |   '/post/timeline/joe_cool'
+//        null        |   '/post/timeline/chuck_norris'
+
+
     }
 
     def "Exercising security filter for unauthenticated user"() {
