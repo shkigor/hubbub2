@@ -2,6 +2,8 @@ package com.grailsinaction
 
 class LoginController {
 
+    static defaultAction = "form"
+
     def form(String id) {
         return [user: new LoginCommand(impersonateId: id)]
     }

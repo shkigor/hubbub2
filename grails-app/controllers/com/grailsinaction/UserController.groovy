@@ -1,7 +1,6 @@
 package com.grailsinaction
 
 
-
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
@@ -14,9 +13,9 @@ class UserController {
 
     def results(String loginId) {
         def users = User.where { loginId =~ "%${loginId}%" }.list()
-        return [ users: users,
-                 term: params.loginId,
-                 totalUsers: User.count() ]
+        return [users     : users,
+                term      : params.loginId,
+                totalUsers: User.count()]
     }
 
     def advSearch() {}
@@ -36,7 +35,7 @@ class UserController {
             }
 
         }
-        [ profiles : profiles ]
+        [profiles: profiles]
 
     }
 
@@ -72,24 +71,35 @@ class UserController {
                 redirect(uri: '/')
             } else {
                 flash.message = "Error Registering User"
-                return [ user: user ]
+                return [user: user]
             }
         }
     }
 
+    def registerCommand() {
+
+    }
+
     def register2(UserRegistrationCommand urc) {
-        if (urc.hasErrors()) {
-            render view: "register", model: [ user : urc ]
-        } else {
-            def user = new User(urc.properties)
-            user.profile = new Profile(urc.properties)
-            if (user.validate() && user.save()) {
-                flash.message = "Welcome aboard, ${urc.fullName ?: urc.loginId}"
-                redirect(uri: '/')
+        if (request.method == "POST") {
+            if (urc.hasErrors()) {
+                render view: "registerCommand", model: [user: urc]
+//            redirect(action: 'loginForm')
+//            return
             } else {
-                // maybe not unique loginId?
-                return [ user : urc ]
+                def user = new User(urc.properties)
+                user.profile = new Profile(urc.properties)
+                if (user.validate() && user.save()) {
+                    flash.message = "Welcome aboard, ${urc.fullName ?: urc.loginId}"
+                    redirect(uri: '/')
+                } else {
+                    // maybe not unique loginId?
+                    render view: "registerCommand", model: [user: urc]
+//                return [ user : urc ]
+                }
             }
+        } else {
+            redirect(action: 'registerCommand')
         }
     }
 
@@ -103,9 +113,9 @@ class UserController {
     }
 
 
-def index(Integer max) {
+    def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond User.list(params), model:[userInstanceCount: User.count()]
+        respond User.list(params), model: [userInstanceCount: User.count()]
     }
 
     def show(User userInstance) {
@@ -124,11 +134,11 @@ def index(Integer max) {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view:'create'
+            respond userInstance.errors, view: 'create'
             return
         }
 
-        userInstance.save flush:true
+        userInstance.save flush: true
 
         request.withFormat {
             form multipartForm {
@@ -151,18 +161,18 @@ def index(Integer max) {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view:'edit'
+            respond userInstance.errors, view: 'edit'
             return
         }
 
-        userInstance.save flush:true
+        userInstance.save flush: true
 
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'User.label', default: 'User'), userInstance.id])
                 redirect userInstance
             }
-            '*'{ respond userInstance, [status: OK] }
+            '*' { respond userInstance, [status: OK] }
         }
     }
 
@@ -174,14 +184,14 @@ def index(Integer max) {
             return
         }
 
-        userInstance.delete flush:true
+        userInstance.delete flush: true
 
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'User.label', default: 'User'), userInstance.id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -191,7 +201,7 @@ def index(Integer max) {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'user.label', default: 'User'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }
