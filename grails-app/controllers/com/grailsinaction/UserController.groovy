@@ -76,33 +76,6 @@ class UserController {
         }
     }
 
-    def registerCommand() {
-
-    }
-
-    def register2(UserRegistrationCommand urc) {
-        if (request.method == "POST") {
-            if (urc.hasErrors()) {
-                render view: "registerCommand", model: [user: urc]
-//            redirect(action: 'loginForm')
-//            return
-            } else {
-                def user = new User(urc.properties)
-                user.profile = new Profile(urc.properties)
-                if (user.validate() && user.save()) {
-                    flash.message = "Welcome aboard, ${urc.fullName ?: urc.loginId}"
-                    redirect(uri: '/')
-                } else {
-                    // maybe not unique loginId?
-                    render view: "registerCommand", model: [user: urc]
-//                return [ user : urc ]
-                }
-            }
-        } else {
-            redirect(action: 'registerCommand')
-        }
-    }
-
     def profile(String id) {
         def user = User.findByLoginId(id)
         if (user) {
