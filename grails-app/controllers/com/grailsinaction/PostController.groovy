@@ -1,5 +1,8 @@
 package com.grailsinaction
 
+import com.grailsinaction.models.UserEmailModel
+import grails.converters.JSON
+
 class PostController {
     static scaffold = true
 
@@ -48,5 +51,13 @@ class PostController {
             // Need to reattach the user domain object to the session using the refresh() method.
             render view: "timeline", model: [ user : session.user.refresh() ]
         }
+    }
+
+    def ajaxGetUserLoginIdAndEmail() {
+        ArrayList<UserEmailModel> list = new ArrayList<>()
+        User.list().each { user ->
+            list << new UserEmailModel(loginId: user.loginId, email: user.profile.email)
+        }
+        render list as JSON
     }
 }
